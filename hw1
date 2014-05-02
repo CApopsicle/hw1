@@ -1,30 +1,29 @@
-
 var http = require("http");
-var request = require("request");
-
 var port = 1337;
-var url = "http://graph.facebook.com/ZacEfron/photos?type=uploaded";
+var request = require("request");
+var url = "http://graph.facebook.com/2014NTUIMCAMP/photos?type=uploaded";
 
-http.createServer(function(req,res){
+http.createServer(function (req, res) {
+  res.writeHeader(200, {"Content-Type": "text/html"});
+  
+  var data = "<html><head></head><title>2014 IM Camp</title><br><body style = 'background-color: B4EAF4;'>";
+  
+  data += '<center><h1 style="font-family:Courier New;color:F47320;margin-bottom:0">2014 IM Camp</h1></center>';
 
-    res.writeHeader(200, {"Content-Type": "text/html"});
-    
-    var data = "<html><head></head><body><center><table border='0' cellspacing='15' cellpadding ='10'></center><td width=180 rowspan=30 bgcolor=black valign=top style='border-radius:13px;'><font face='Segoe UI Symbol' color='white' size='90'>Z<br>A<br>C<p>E<br>F<br>R<br>O<br>N</br></font></td><td align=center bgcolor='black' style='border-radius:13px;'><font face='Lucida Calligraphy' color='white' size='6'><b>Photo Collection</b></font></td><tr>";
+  request.get(url, function (err, body, response) {
 
-    request.get(url,function(err,body,result){
-    result = JSON.parse(result);
+    response = JSON.parse(response);
+    var count = 0;
+    response.data.forEach(function (val, idx) {
+      data += "<div id ='p"+count+"'><center><img src='"+val.images[2].source+"' ></center></div><br>";
+      count++;
+    });
+
     
-    result.data.forEach(function(val,idx){
-        data += "<td style='border:12px black double;border-radius:13px;'><img src='" + val.images[2].source+ "' width=700 style='border-radius:13px;'></td><tr>";
-    })
-    
-    data += "</table></body></html>"
+    data += "</div></body></html>";
     res.end(data);
-    })
-    ;
+  });
 
+}).listen(port);
 
-}
-).listen(port);
-
-console.log("start server create: " + port);
+console.log("start server port: " + port);
